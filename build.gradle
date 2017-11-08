@@ -19,10 +19,6 @@ mainClassName = group + '.CorePlugin'
 repositories {
     mavenCentral()
 
-    flatDir {
-        dirs 'libs'
-    }
-
     maven {
         url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
     }
