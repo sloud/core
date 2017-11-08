@@ -8,7 +8,7 @@ import org.bukkit.plugin.Plugin;
  */
 public interface ICorePlugin extends Plugin, IInjectorAware {
 
-    String PLUGIN_NAME = "SloudCore";
+    String PLUGIN_NAME = "Core";
 
     void setUpConfiguration();
 
