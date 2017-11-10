@@ -1,20 +1,21 @@
 package com.reynke.sloud.core;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
+import com.google.inject.*;
 import com.reynke.sloud.core.dependencyinjection.CoreModule;
 import com.reynke.sloud.databaseutilities.configuration.DatabaseConfiguration;
+import com.reynke.sloud.databaseutilities.configuration.DatabaseType;
 import com.reynke.sloud.databaseutilities.configuration.IDatabaseConfiguration;
 import com.reynke.sloud.databaseutilities.database.IDatabase;
 import com.reynke.sloud.databaseutilities.database.IDatabaseEntitiesAware;
 import com.reynke.sloud.databaseutilities.dependencyinjection.DatabaseUtilitiesModule;
 import com.reynke.sloud.databaseutilities.exception.DatabaseUtilitiesException;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -24,16 +25,16 @@ import java.util.logging.Level;
 public class CorePlugin extends JavaPlugin implements ICorePlugin {
 
     private Injector injector;
-    private Injector databaseUtilitiesInjector;
 
     @Override
     public void onEnable() {
 
         super.onEnable();
 
-        this.setUpInjector();
         this.setUpConfiguration();
-        this.setUpDatabaseUtilities();
+        this.setUpInjector();
+
+        this.getLogger().log(Level.INFO, "Done.");
     }
 
     @Override
@@ -45,7 +46,7 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
         try {
 
             this.getLogger().log(Level.INFO, "Trying to close database connection ...");
-            databaseUtilitiesInjector.getInstance(IDatabase.class).closeDatabaseConnection();
+            this.getInjector().getInstance(IDatabase.class).closeDatabaseConnection();
 
         } catch (DatabaseUtilitiesException e) {
 
@@ -58,9 +59,33 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
         }
     }
 
-    @Override
-    public void setUpInjector() {
-        injector = Guice.createInjector(new CoreModule(this));
+    private void setUpInjector() {
+
+        List<Module> modules = new ArrayList<>();
+
+        modules.add(new CoreModule(this));
+        modules.add(this.setUpDatabaseUtilitiesModule());
+
+        Plugin[] plugins = this.getServer().getPluginManager().getPlugins();
+
+        this.getLogger().log(Level.INFO, "Collecting dependency injection modules from plugins implementing \"" + IModuleAware.class.getName() + "\" ...");
+
+        // Loading dependency injection modules from plugins
+        for (Plugin plugin : plugins) {
+
+            // Make sure the plugin is a dependency injection module aware plugin
+            if (!(plugin instanceof IModuleAware)) {
+                continue;
+            }
+
+            this.getLogger().log(Level.INFO, "Loading dependency injection module from \"" + plugin.getName() + "\" ...");
+
+            modules.add(((IModuleAware) plugin).getModule());
+
+            this.getLogger().log(Level.INFO, "Successfully loaded dependency injection module from \"" + plugin.getName() + "\" ...");
+        }
+
+        injector = Guice.createInjector(modules);
     }
 
     @Override
@@ -68,18 +93,11 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
         return injector;
     }
 
-    @Override
-    public Injector getDatabaseUtilitiesInjector() {
-        return databaseUtilitiesInjector;
-    }
-
-    @Override
-    public void setUpConfiguration() {
+    private void setUpConfiguration() {
         this.saveDefaultConfig();
     }
 
-    @Override
-    public void setUpDatabaseUtilities() {
+    private Module setUpDatabaseUtilitiesModule() {
 
         this.getLogger().log(Level.INFO, "Configuring database connection ...");
 
@@ -91,6 +109,9 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
         databaseConfiguration.setDatabaseName(fileConfiguration.getString("database.databaseName"));
         databaseConfiguration.setUsername(fileConfiguration.getString("database.username"));
         databaseConfiguration.setPassword(fileConfiguration.getString("database.password"));
+        databaseConfiguration.setDatabaseType(this.getDatabaseTypeFromConfig(fileConfiguration));
+
+        this.getLogger().log(Level.INFO, "Using database \"" + databaseConfiguration.getDatabaseName() + "\" on \"" + databaseConfiguration.getHost() + ":" + databaseConfiguration.getPort() + "\".");
 
         databaseConfiguration.setPackages(new ArrayList<>());
         databaseConfiguration.setAnnotatedClasses(new ArrayList<>());
@@ -121,10 +142,30 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
             this.getLogger().log(Level.INFO, "Successfully loaded annotated classes and packages from \"" + plugin.getName() + "\" ...");
         }
 
-        this.getLogger().log(Level.INFO, "Trying to set up the database connection ...");
+        this.getLogger().log(Level.INFO, "Trying to set up dependency injection module for \"DatabaseUtilities\" ...");
 
-        databaseUtilitiesInjector = injector.createChildInjector(new DatabaseUtilitiesModule(databaseConfiguration));
+        Module databaseUtilitiesModule = new DatabaseUtilitiesModule(databaseConfiguration);
 
-        this.getLogger().log(Level.INFO, "Successfully set up the database connection!");
+        this.getLogger().log(Level.INFO, "Successfully set dependency injection module for \"DatabaseUtilities\".");
+
+        return databaseUtilitiesModule;
+    }
+
+    private DatabaseType getDatabaseTypeFromConfig(MemorySection config) {
+
+        String databaseType = config.getString("database.databaseType");
+
+        switch (databaseType) {
+
+            default:
+            case "mysql":
+                return DatabaseType.MY_SQL;
+
+            case "postgresql":
+                return DatabaseType.POSTGRE_SQL;
+
+            case "mariadb":
+                return DatabaseType.MARIA_DB;
+        }
     }
 }

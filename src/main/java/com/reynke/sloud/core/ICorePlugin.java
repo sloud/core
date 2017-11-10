@@ -6,13 +6,12 @@ import org.bukkit.plugin.Plugin;
 /**
  * @author Nicklas Reincke (contact@reynke.com)
  */
-public interface ICorePlugin extends Plugin, IInjectorAware {
+public interface ICorePlugin extends Plugin {
 
     String PLUGIN_NAME = "Core";
 
-    void setUpConfiguration();
-
-    void setUpDatabaseUtilities();
-
-    Injector getDatabaseUtilitiesInjector();
+    /**
+     * @return The core injector.
+     */
+    Injector getInjector();
 }
