@@ -4,3 +4,4 @@ database:
   databaseName: ""
   username: root
   password: ""
+  databaseType: mysql
