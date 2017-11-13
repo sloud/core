@@ -185,7 +185,7 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
                 break;
 
             case "create":
-                hbm2ddlOption = Hbm2ddlOption.CREATE:
+                hbm2ddlOption = Hbm2ddlOption.CREATE;
                 break;
 
             case "create-drop":
