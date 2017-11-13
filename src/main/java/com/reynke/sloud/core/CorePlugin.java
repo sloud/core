@@ -15,6 +15,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -113,6 +115,8 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
         databaseConfiguration.setDatabaseType(this.getDatabaseTypeFromConfig(fileConfiguration));
         databaseConfiguration.setHbm2ddlOption(this.getHbm2ddlOptionFromConfig(fileConfiguration));
 
+        this.secureHbm2ddlOptionInConfig(fileConfiguration);
+
         this.getLogger().log(Level.INFO, "Using database \"" + databaseConfiguration.getDatabaseName() + "\" on \"" + databaseConfiguration.getHost() + ":" + databaseConfiguration.getPort() + "\".");
 
         databaseConfiguration.setPackages(new ArrayList<>());
@@ -194,5 +198,22 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
         }
 
         return hbm2ddlOption;
+    }
+
+    /**
+     * Secures the hbm2ddl option and sets it to "validate" to not
+     * accidentally recreate, drop or delete database tables.
+     *
+     * @param config The configuration file.
+     */
+    private void secureHbm2ddlOptionInConfig(FileConfiguration config) {
+
+        config.set("database.hbm2ddl", Hbm2ddlOption.VALIDATE.getValue());
+
+        try {
+            config.save(new File(this.getDataFolder(), "config.yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
