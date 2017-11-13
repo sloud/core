@@ -163,9 +163,6 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
 
             case "postgresql":
                 return DatabaseType.POSTGRE_SQL;
-
-            case "mariadb":
-                return DatabaseType.MARIA_DB;
         }
     }
 }
