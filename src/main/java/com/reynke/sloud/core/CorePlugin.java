@@ -171,7 +171,7 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
     private Hbm2ddlOption getHbm2ddlOptionFromConfig(FileConfiguration config) {
 
         String hbm2ddl = config.getString("database.hbm2ddl");
-        Hbm2ddlOption hbm2ddlOption = null;
+        Hbm2ddlOption hbm2ddlOption;
 
         switch (hbm2ddl) {
 
