@@ -4,6 +4,7 @@ import com.google.inject.*;
 import com.reynke.sloud.core.dependencyinjection.CoreModule;
 import com.reynke.sloud.databaseutilities.configuration.DatabaseConfiguration;
 import com.reynke.sloud.databaseutilities.configuration.DatabaseType;
+import com.reynke.sloud.databaseutilities.configuration.Hbm2ddlOption;
 import com.reynke.sloud.databaseutilities.configuration.IDatabaseConfiguration;
 import com.reynke.sloud.databaseutilities.database.IDatabase;
 import com.reynke.sloud.databaseutilities.database.IDatabaseEntitiesAware;
@@ -110,6 +111,7 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
         databaseConfiguration.setUsername(fileConfiguration.getString("database.username"));
         databaseConfiguration.setPassword(fileConfiguration.getString("database.password"));
         databaseConfiguration.setDatabaseType(this.getDatabaseTypeFromConfig(fileConfiguration));
+        databaseConfiguration.setHbm2ddlOption(this.getHbm2ddlOptionFromConfig(fileConfiguration));
 
         this.getLogger().log(Level.INFO, "Using database \"" + databaseConfiguration.getDatabaseName() + "\" on \"" + databaseConfiguration.getHost() + ":" + databaseConfiguration.getPort() + "\".");
 
@@ -164,5 +166,33 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
             case "postgresql":
                 return DatabaseType.POSTGRE_SQL;
         }
+    }
+
+    private Hbm2ddlOption getHbm2ddlOptionFromConfig(FileConfiguration config) {
+
+        String hbm2ddl = config.getString("database.hbm2ddl");
+        Hbm2ddlOption hbm2ddlOption = null;
+
+        switch (hbm2ddl) {
+
+            default:
+            case "validate":
+                hbm2ddlOption = Hbm2ddlOption.VALIDATE;
+                break;
+
+            case "update":
+                hbm2ddlOption = Hbm2ddlOption.UPDATE;
+                break;
+
+            case "create":
+                hbm2ddlOption = Hbm2ddlOption.CREATE:
+                break;
+
+            case "create-drop":
+                hbm2ddlOption = Hbm2ddlOption.CREATE_DROP;
+                break;
+        }
+
+        return hbm2ddlOption;
     }
 }
