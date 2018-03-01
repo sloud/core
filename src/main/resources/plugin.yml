@@ -1,0 +1,7 @@
+name: Core
+version: 1.0-SNAPSHOT
+description:
+authors: [Nicklas Reincke]
+website: https://www.reynke.com
+
+main: com.reynke.sloud.core.CorePlugin
