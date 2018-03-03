@@ -22,7 +22,7 @@ targetCompatibility = 1.8
 
 def libraryGroupId = 'com.reynke.sloud'
 def libraryArtifactId = 'core'
-def libraryVersion = '1.0.0'
+def libraryVersion = '1.0.1'
 def libraryMainClassName = 'CorePlugin'
 
 group libraryGroupId + '.' + libraryArtifactId
@@ -49,7 +49,7 @@ configurations {
 dependencies {
     compile group: 'org.spigotmc', name: 'spigot-api', version: '1.12-R0.1-SNAPSHOT'
     extraLibs group: 'com.google.inject', name: 'guice', version: '4.1.0'
-    extraLibs group: 'com.reynke.sloud.databaseutilities', name: 'DatabaseUtilities', version: '1.0.0'
+    extraLibs group: 'com.reynke.sloud.databaseutilities', name: 'DatabaseUtilities', version: '1.0.1'
     testCompile group: 'junit', name: 'junit', version: '4.12'
     configurations.compile.extendsFrom(configurations.extraLibs)
 }
@@ -88,7 +88,7 @@ artifactory {
     }
     resolve {
         repository {
-            repoKey = 'gradle-release'
+            repoKey = 'gradle-all'
             username = reynke_artifactory_username
             password = reynke_artifactory_password
             maven = true
