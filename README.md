@@ -15,6 +15,12 @@ brew install --cask adoptopenjdk16-jre
 
 **1.0.2**
 
+* Code cleanup
+* Update Gradle
+* Set Java version compatibility to `16`
+* Use new database utilities dep
+* Update deps
+* Use Paper instead of Spigot
 
 **1.0.1**
 
