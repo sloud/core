@@ -41,7 +41,7 @@ configurations {
 dependencies {
     implementation group: 'io.papermc.paper', name: 'paper-api', version: '1.17-R0.1-SNAPSHOT'
     extraLibs group: 'com.google.inject', name: 'guice', version: '5.0.1'
-    extraLibs group: 'com.reynke.sloud', name: 'databaseutilities', version: '1.0.4'
+    extraLibs group: 'com.reynke.sloud', name: 'databaseutilities', version: '1.0.5'
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     configurations.implementation.extendsFrom(configurations.extraLibs)
 }
