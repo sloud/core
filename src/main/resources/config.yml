@@ -1,10 +1,8 @@
 database:
-  # Valid options: validate, update, create, create-drop
   hbm2ddl: validate
   host: 127.0.0.1
   port: 3306
   databaseName: ""
   username: root
   password: ""
-  # Available types: mysql, mariadb, postgresql
-  databaseType: mysql
+  databaseType: mysql5

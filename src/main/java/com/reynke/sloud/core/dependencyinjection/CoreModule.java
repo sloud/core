@@ -145,9 +145,11 @@ public class CoreModule extends AbstractModule {
         }
 
         return switch (databaseType) {
-            case "mysql" -> DatabaseType.MY_SQL;
+            case "mysql5" -> DatabaseType.MY_SQL_5;
+            case "mysql8" -> DatabaseType.MY_SQL_8;
             case "mariadb" -> DatabaseType.MARIA_DB;
-            case "postgresql" -> DatabaseType.POSTGRE_SQL;
+            case "postgresql9" -> DatabaseType.POSTGRE_SQL_9;
+            case "postgresql10" -> DatabaseType.POSTGRE_SQL_10;
             default -> throw new IllegalStateException("Unexpected database type: " + databaseType);
         };
     }
