@@ -15,12 +15,10 @@ import java.util.logging.Level;
  */
 @Singleton
 public class CorePlugin extends JavaPlugin implements ICorePlugin {
-
     private Injector injector;
 
     @Override
     public void onEnable() {
-
         super.onEnable();
 
         this.setUpConfiguration();
@@ -31,22 +29,16 @@ public class CorePlugin extends JavaPlugin implements ICorePlugin {
 
     @Override
     public void onDisable() {
-
         super.onDisable();
 
         // Close the database connection on disable.
         try {
-
             this.getLogger().log(Level.INFO, "Trying to close database connection ...");
             this.getInjector().getInstance(IDatabase.class).closeDatabaseConnection();
-
         } catch (DatabaseUtilitiesException e) {
-
             this.getLogger().log(Level.SEVERE, "Error closing database connection: " + e.getMessage());
             e.printStackTrace();
-
         } finally {
-
             this.getLogger().log(Level.INFO, "Successfully closed database connection.");
         }
     }

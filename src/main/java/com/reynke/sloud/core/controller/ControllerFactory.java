@@ -16,10 +16,8 @@ import java.util.Map;
  */
 @Singleton
 public class ControllerFactory implements IControllerFactory {
-
-    private Injector injector;
-
-    private static Map<String, IController> controllerCache;
+    private final Injector injector;
+    private static final Map<String, IController> controllerCache;
 
     static {
         controllerCache = new HashMap<>();
@@ -31,8 +29,7 @@ public class ControllerFactory implements IControllerFactory {
     }
 
     @Override
-    public IController getController(Class<? extends IEntity> entityType) throws CoreException {
-
+    public IController getController(Class<? extends IEntity<?>> entityType) throws CoreException {
         // Load controller from cache if it was found in cache
         if (controllerCache.containsKey(entityType.getName())) {
             return controllerCache.get(entityType.getName());

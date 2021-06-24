@@ -7,7 +7,6 @@ import org.bukkit.plugin.Plugin;
  * @author Nicklas Reincke (contact@reynke.com)
  */
 public interface ICorePlugin extends Plugin {
-
     String PLUGIN_NAME = "Core";
 
     /**

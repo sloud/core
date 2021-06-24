@@ -8,5 +8,5 @@ import com.reynke.sloud.databaseutilities.entity.IEntity;
  */
 public interface IControllerFactory {
 
-    IController getController(Class<? extends IEntity> entityType) throws CoreException;
+    IController getController(Class<? extends IEntity<?>> entityType) throws CoreException;
 }

@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 /**
  * @author Nicklas Reincke (contact@reynke.com)
  */
-public interface IListener<T extends IEntity> extends Listener {
+public interface IListener<T extends IEntity<?>> extends Listener {
 
     /**
      * @param entityType The type of the entity that holds information about

@@ -9,9 +9,8 @@ import com.reynke.sloud.databaseutilities.entity.IEntity;
 /**
  * @author Nicklas Reincke (contact@reynke.com)
  */
-public abstract class AbstractListener<T extends IEntity> implements IListener<T> {
-
-    private IControllerFactory controllerFactory;
+public abstract class AbstractListener<T extends IEntity<?>> implements IListener<T> {
+    private final IControllerFactory controllerFactory;
 
     @Inject
     public AbstractListener(IControllerFactory controllerFactory) {
@@ -20,9 +19,8 @@ public abstract class AbstractListener<T extends IEntity> implements IListener<T
 
     @Override
     public IController getController(T entityType) {
-
         try {
-            return controllerFactory.getController(entityType.getClass());
+            return controllerFactory.getController((Class<? extends IEntity<?>>) entityType.getClass());
         } catch (CoreException e) {
             throw new RuntimeException(e);
         }

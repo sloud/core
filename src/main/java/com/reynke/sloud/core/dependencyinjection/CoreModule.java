@@ -25,8 +25,7 @@ import java.util.logging.Level;
  * @author Nicklas Reincke (contact@reynke.com)
  */
 public class CoreModule extends AbstractModule {
-
-    private ICorePlugin corePlugin;
+    private final ICorePlugin corePlugin;
 
     public CoreModule(ICorePlugin corePlugin) {
         this.corePlugin = corePlugin;
@@ -34,28 +33,26 @@ public class CoreModule extends AbstractModule {
 
     @Override
     protected void configure() {
-
         bind(ICorePlugin.class).toInstance(corePlugin);
         bind(IControllerFactory.class).to(ControllerFactory.class);
 
         install(this.setUpDatabaseUtilitiesModule());
+
         corePlugin.getLogger().log(Level.INFO, "Successfully installed dependency injection module from \"DatabaseUtilities\".");
 
         // Loading dependency injection modules from plugins
         for (Plugin plugin : corePlugin.getServer().getPluginManager().getPlugins()) {
-
             // Make sure the plugin is a dependency injection module aware plugin
-            if (!(plugin instanceof IModuleAware)) {
+            if (!(plugin instanceof IModuleAware moduleAwarePlugin)) {
                 continue;
             }
 
-            install(((IModuleAware) plugin).getModule());
+            install(moduleAwarePlugin.getModule());
             corePlugin.getLogger().log(Level.INFO, "Successfully installed dependency injection module from Plugin \"" + plugin.getName() + "\".");
         }
     }
 
     private Module setUpDatabaseUtilitiesModule() {
-
         corePlugin.getLogger().log(Level.INFO, "Configuring database connection ...");
 
         FileConfiguration fileConfiguration = corePlugin.getConfig();
@@ -81,20 +78,17 @@ public class CoreModule extends AbstractModule {
         corePlugin.getLogger().log(Level.INFO, "Loading annotated classes and packages containing them from plugins implementing \"" + IDatabaseEntitiesAware.class.getName() + "\" ...");
 
         for (Plugin plugin : plugins) {
-
             // Don't import packages and annotated classes held by this plugin
             if (plugin.getName().equals(corePlugin.getName())) {
                 continue;
             }
 
             // Make sure the plugin is a database entities aware plugin
-            if (!(plugin instanceof IDatabaseEntitiesAware)) {
+            if (!(plugin instanceof IDatabaseEntitiesAware databaseEntitiesAwarePlugin)) {
                 continue;
             }
 
             corePlugin.getLogger().log(Level.INFO, "Loading annotated classes and packages from \"" + plugin.getName() + "\" ...");
-
-            IDatabaseEntitiesAware databaseEntitiesAwarePlugin = (IDatabaseEntitiesAware) plugin;
 
             databaseConfiguration.getPackages().addAll(databaseEntitiesAwarePlugin.getPackages());
             databaseConfiguration.getAnnotatedClasses().addAll(databaseEntitiesAwarePlugin.getAnnotatedClasses());
@@ -118,7 +112,6 @@ public class CoreModule extends AbstractModule {
      * @param config The configuration file.
      */
     private void secureHbm2ddlOptionInConfig(FileConfiguration config) {
-
         config.set("database.hbm2ddl", Hbm2ddlOption.VALIDATE.getValue());
 
         try {
@@ -129,48 +122,33 @@ public class CoreModule extends AbstractModule {
     }
 
     private Hbm2ddlOption getHbm2ddlOptionFromConfig(FileConfiguration config) {
-
         String hbm2ddl = config.getString("database.hbm2ddl");
-        Hbm2ddlOption hbm2ddlOption;
 
-        switch (hbm2ddl) {
-
-            default:
-            case "validate":
-                hbm2ddlOption = Hbm2ddlOption.VALIDATE;
-                break;
-
-            case "update":
-                hbm2ddlOption = Hbm2ddlOption.UPDATE;
-                break;
-
-            case "create":
-                hbm2ddlOption = Hbm2ddlOption.CREATE;
-                break;
-
-            case "create-drop":
-                hbm2ddlOption = Hbm2ddlOption.CREATE_DROP;
-                break;
+        if (hbm2ddl == null) {
+            return Hbm2ddlOption.VALIDATE;
         }
 
-        return hbm2ddlOption;
+        return switch (hbm2ddl) {
+            case "validate" -> Hbm2ddlOption.VALIDATE;
+            case "update" -> Hbm2ddlOption.UPDATE;
+            case "create" -> Hbm2ddlOption.CREATE;
+            case "create-drop" -> Hbm2ddlOption.CREATE_DROP;
+            default -> throw new IllegalStateException("Unexpected hbm2ddl option: " + hbm2ddl);
+        };
     }
 
     private DatabaseType getDatabaseTypeFromConfig(MemorySection config) {
-
         String databaseType = config.getString("database.databaseType");
 
-        switch (databaseType) {
-
-            default:
-            case "mysql":
-                return DatabaseType.MY_SQL;
-
-            case "mariadb":
-                return DatabaseType.MARIA_DB;
-
-            case "postgresql":
-                return DatabaseType.POSTGRE_SQL;
+        if (databaseType == null) {
+            throw new IllegalStateException("Database type not set");
         }
+
+        return switch (databaseType) {
+            case "mysql" -> DatabaseType.MY_SQL;
+            case "mariadb" -> DatabaseType.MARIA_DB;
+            case "postgresql" -> DatabaseType.POSTGRE_SQL;
+            default -> throw new IllegalStateException("Unexpected database type: " + databaseType);
+        };
     }
 }
