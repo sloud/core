@@ -56,6 +56,11 @@ brew install --cask adoptopenjdk16-jre
 
 ## Changelog
 
+**1.0.3**
+
+* Update dependency for database utilities
+* New database types
+
 **1.0.2**
 
 * Code cleanup
