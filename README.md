@@ -97,6 +97,14 @@ brew install --cask adoptopenjdk16-jre
 
 ## Changelog
 
+**1.1.0**
+
+* Detach database usage from Core plugin
+  * Each plugin itself should decide whether it needs a database
+  * Database utilities still exist
+    * A database module for dependency injection can still be created (documented under #creating-a-database-connection)
+* Better documentation
+
 **1.0.3**
 
 * Update dependency for database utilities

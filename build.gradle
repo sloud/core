@@ -8,7 +8,7 @@ targetCompatibility = JavaVersion.VERSION_16
 
 def libraryGroupId = 'com.reynke.sloud'
 def libraryArtifactId = rootProject.name
-def libraryVersion = '1.0.3'
+def libraryVersion = '1.1.0'
 def libraryMainClassName = 'CorePlugin'
 
 group libraryGroupId
