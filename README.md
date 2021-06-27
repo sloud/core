@@ -97,6 +97,11 @@ brew install --cask adoptopenjdk16-jre
 
 ## Changelog
 
+**1.1.1**
+
+* Detach `IEntity` interface, from the database utilities dependency, from controllers and listeners
+  * Controllers and listeners should not be bound to database entities but also to things outside the database scope
+
 **1.1.0**
 
 * Detach database usage from Core plugin
