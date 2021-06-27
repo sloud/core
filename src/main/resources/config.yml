@@ -1,8 +1,0 @@
-database:
-  hbm2ddl: validate
-  host: 127.0.0.1
-  port: 3306
-  databaseName: ""
-  username: root
-  password: ""
-  databaseType: mysql5
